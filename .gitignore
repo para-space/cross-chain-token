@@ -24,3 +24,11 @@ dist/
 .vscode/
 
 lib/
+/.idea/.gitignore
+/deployments/hardhat_addresses.json
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/ParallelBridge.iml
+/.idea/runConfigurations.xml
+/.idea/vcs.xml
+/yarn-error.log

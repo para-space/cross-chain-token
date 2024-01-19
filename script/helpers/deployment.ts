@@ -1,4 +1,4 @@
-import { tEthereumAddress } from "../../src";
+import {eContractid, tEthereumAddress} from "../types";
 import hre, { ethers } from "hardhat";
 import {
   AaveStrategy,
@@ -12,6 +12,8 @@ import {
   XERC20Factory,
 } from "../../typechain-types";
 import { overrides } from "./networks";
+import { storeDeployInfo } from "./utils";
+import { ZEROADDRESS } from "./constants";
 
 export const getERC20 = async (address: tEthereumAddress) => {
   const ERC20Factory = await ethers.getContractFactory("ERC20");
@@ -23,17 +25,72 @@ export const deployFactory = async () => {
   const XERC20Factory = await XERC20FactoryFactory.deploy({
     ...overrides[hre.network.name],
   });
-  console.log(
-    "XERC20Factory.deployTransaction.hash:",
-    XERC20Factory.deploymentTransaction().hash
-  );
   await XERC20Factory.deploymentTransaction().wait(1);
 
-  console.log("XERC20Factory deployed to:", await XERC20Factory.getAddress());
+  const factoryAddr = await XERC20Factory.getAddress();
+  await storeDeployInfo("XERC20Factory", {
+    address: factoryAddr,
+    constructorArgs: [],
+  });
 
-  return XERC20FactoryFactory.attach(
-    await XERC20Factory.getAddress()
-  ) as unknown as XERC20Factory;
+  console.log("XERC20Factory deployed to:", factoryAddr);
+
+  return XERC20FactoryFactory.attach(factoryAddr) as unknown as XERC20Factory;
+};
+
+export const deployXERC20 = async (
+  factory: XERC20Factory,
+  tokenName: string,
+  tokenSymbol: string
+) => {
+  const xTokenName = `x${tokenName}`;
+  const xTokenSymbol = `x${tokenSymbol}`;
+  const deployTx = await factory.deployXERC20(
+    xTokenName,
+    xTokenSymbol,
+    [],
+    [],
+    [],
+    {
+      ...overrides[hre.network.name],
+    }
+  );
+  const xERC20Receipt = await deployTx.wait(1);
+  const logLength = xERC20Receipt.logs.length;
+  const xERC20Addr = `0x${xERC20Receipt.logs[logLength - 1].data.slice(26)}`;
+
+  await storeDeployInfo(`${eContractid.XERC20}-${tokenSymbol}`, {
+    address: xERC20Addr,
+    constructorArgs: [xTokenName, xTokenSymbol, await factory.getAddress()],
+  });
+
+  console.log(`XERC20-${tokenSymbol} deployed to: ${xERC20Addr}`);
+
+  return xERC20Addr;
+};
+
+export const deployLockbox = async (
+  factory: XERC20Factory,
+  xToken: string,
+  token: string,
+  tokenSymbol: string
+) => {
+  const isGasToken = token === ZEROADDRESS;
+  const deployTx = await factory.deployLockbox(xToken, token, isGasToken, {
+    ...overrides[hre.network.name],
+  });
+  const xERC20Receipt = await deployTx.wait(1);
+  const logLength = xERC20Receipt.logs.length;
+  const lockBoxAddr = `0x${xERC20Receipt.logs[logLength - 1].data.slice(26)}`;
+
+  await storeDeployInfo(`${eContractid.LockBox}-${tokenSymbol}`, {
+    address: lockBoxAddr,
+    constructorArgs: [xToken, token, isGasToken, xERC20Receipt.from],
+  });
+
+  console.log(`LockBox-${tokenSymbol} deployed to: ${lockBoxAddr}`);
+
+  return lockBoxAddr;
 };
 
 export const deployAAVEStrategyImpl = async () => {
@@ -43,6 +100,10 @@ export const deployAAVEStrategyImpl = async () => {
   });
   await AaveStrategyImpl.deploymentTransaction().wait(1);
   const implAddress = await AaveStrategyImpl.getAddress();
+  await storeDeployInfo(eContractid.AaveStrategyImpl, {
+    address: implAddress,
+    constructorArgs: [],
+  });
 
   console.log("AaveStrategyImpl deployed to:", implAddress);
 
@@ -55,10 +116,6 @@ export const deployAAVEStrategy = async (
   vault: tEthereumAddress,
   proxyAdmin: tEthereumAddress
 ) => {
-  console.log("impl:", impl);
-  console.log("aave:", aave);
-  console.log("vault:", vault);
-  console.log("proxyAdmin:", proxyAdmin);
   const AaveStrategyFactory = await ethers.getContractFactory("AaveStrategy");
   const initData = AaveStrategyFactory.interface.encodeFunctionData(
     "initialize",
@@ -76,17 +133,13 @@ export const deployAAVEStrategy = async (
   );
   await ParallelProxy.deploymentTransaction().wait(1);
 
-  console.log(
-    "AAVEStrategy Proxy deployed to:",
-    await ParallelProxy.getAddress()
-  );
-  console.log("impl:", impl);
-  console.log("proxyAdmin:", proxyAdmin);
-  console.log("initData:", initData);
+  const proxyAddr = await ParallelProxy.getAddress();
+  await storeDeployInfo(eContractid.AaveStrategyProxy, {
+    address: proxyAddr,
+    constructorArgs: [impl, proxyAdmin, initData],
+  });
 
-  return AaveStrategyFactory.attach(
-    await ParallelProxy.getAddress()
-  ) as unknown as AaveStrategy;
+  return AaveStrategyFactory.attach(proxyAddr) as unknown as AaveStrategy;
 };
 
 export const deployETHAAVEStrategy = async (
@@ -102,10 +155,12 @@ export const deployETHAAVEStrategy = async (
     ...overrides[hre.network.name],
   });
   await IMPL.deploymentTransaction().wait(1);
-  console.log("ETHAAVEStrategy IMPL deployed to:", await IMPL.getAddress());
-  console.log("wstETH:", wstETH);
-  console.log("aave:", aave);
-  console.log("vault:", vault);
+  const implAddress = await IMPL.getAddress();
+  await storeDeployInfo(eContractid.ETHAaveStrategyImpl, {
+    address: implAddress,
+    constructorArgs: [wstETH, aave, vault],
+  });
+  console.log("ETHAAVEStrategy IMPL deployed to:", implAddress);
 
   const initData = ETHAaveStrategyFactory.interface.encodeFunctionData(
     "initialize",
@@ -113,7 +168,7 @@ export const deployETHAAVEStrategy = async (
   );
   const ParallelProxyFactory = await ethers.getContractFactory("ParallelProxy");
   const ParallelProxy = await ParallelProxyFactory.deploy(
-    await IMPL.getAddress(),
+    implAddress,
     proxyAdmin,
     initData,
     {
@@ -122,11 +177,12 @@ export const deployETHAAVEStrategy = async (
   );
   await ParallelProxy.deploymentTransaction().wait(1);
   const proxyAddr = await ParallelProxy.getAddress();
+  await storeDeployInfo(eContractid.ETHAaveStrategyProxy, {
+    address: proxyAddr,
+    constructorArgs: [implAddress, proxyAdmin, initData],
+  });
 
   console.log("ETHAAVEStrategy Proxy deployed to:", proxyAddr);
-  console.log("impl:", await IMPL.getAddress());
-  console.log("proxyAdmin:", proxyAdmin);
-  console.log("initData:", initData);
 
   return ETHAaveStrategyFactory.attach(proxyAddr) as unknown as ETHAaveStrategy;
 };

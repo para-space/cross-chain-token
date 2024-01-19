@@ -1,21 +1,19 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 import { getMarketConfig } from "../helpers/utils";
-import { Strategy } from "../../src";
-import hre, { ethers } from "hardhat";
+import { ethers } from "hardhat";
 import { XERC20Factory, XERC20Lockbox } from "../../typechain-types";
-import { ZEROADDRESS } from "../helpers/constants";
 import {
   deployAAVEStrategy,
   deployAAVEStrategyImpl,
   deployETHAAVEStrategy,
   deployFactory,
+  deployLockbox,
+  deployXERC20,
   getERC20,
 } from "../helpers/deployment";
+import { Strategy } from "../types";
 
-/**
- * Deploys contracts for all networks
- */
 export const main = async () => {
   const marketConfig = getMarketConfig();
 
@@ -31,17 +29,14 @@ export const main = async () => {
       const token = await getERC20(tokenConfig.address);
       const tokenSymbol = await token.symbol();
       const tokenName = await token.name();
-      await factory.deployToken(
-        tokenConfig.address,
-        tokenConfig.address === ZEROADDRESS,
-        `x${tokenName}`,
-        `x${tokenSymbol}`,
-        [],
-        [],
-        []
-      );
 
-      const lockBox = await factory.lockboxRegistry(tokenConfig.address);
+      const xERC20Addr = await deployXERC20(factory, tokenName, tokenSymbol);
+      const lockBox = await deployLockbox(
+        factory,
+        xERC20Addr,
+        tokenConfig.address,
+        tokenSymbol
+      );
 
       let strategy;
       switch (tokenConfig.strategy) {

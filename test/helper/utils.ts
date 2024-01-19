@@ -14,10 +14,12 @@ import {
   deployAAVEStrategyImpl,
   deployETHAAVEStrategy,
   deployFactory,
+  deployLockbox,
   deployMintableERC20,
   deployMOCKAAVE,
   deployMOCKLICO,
   deployMOCKWSTETH,
+  deployXERC20,
 } from "../../script/helpers/deployment";
 import { ZEROADDRESS } from "../../script/helpers/constants";
 
@@ -51,33 +53,34 @@ export const deployFixture = async function () {
   const lockBoxFactory = await hre.ethers.getContractFactory("XERC20Lockbox");
   const xERC20Factory = await hre.ethers.getContractFactory("XERC20");
 
-  await factory.deployToken(
-    tokenAddress,
-    false,
-    "Test Token Name",
-    "Test Token symbol",
-    [],
-    [],
-    []
+  const xERC20Address = await deployXERC20(
+    factory,
+    "TestTokenName",
+    "TestTokenSymbol"
   );
-  const testLockBoxAddress = await factory.lockboxRegistry(tokenAddress);
+  const testLockBoxAddress = await deployLockbox(
+    factory,
+    xERC20Address,
+    tokenAddress,
+    "TestTokenSymbol"
+  );
   const lockBox = lockBoxFactory.attach(testLockBoxAddress);
-  let xERC20Address = await lockBox.XERC20();
   const xERC20: XERC20 = xERC20Factory.attach(xERC20Address);
 
-  await factory.deployToken(
-    ZEROADDRESS,
-    true,
+  const ethXERC20Address = await deployXERC20(
+    factory,
     "ETHXERC20",
-    "ETHXERC20",
-    [],
-    [],
-    []
+    "ETHXERC20"
   );
-  const ethLockBoxAddress = await factory.lockboxRegistry(ZEROADDRESS);
+  const ethLockBoxAddress = await deployLockbox(
+    factory,
+    ethXERC20Address,
+    ZEROADDRESS,
+    "ETHXERC20"
+  );
+
   const ethLockBox = lockBoxFactory.attach(ethLockBoxAddress);
-  xERC20Address = await ethLockBox.XERC20();
-  const ethXERC20: XERC20 = xERC20Factory.attach(xERC20Address);
+  const ethXERC20: XERC20 = xERC20Factory.attach(ethXERC20Address);
 
   const aaveStrategyImpl = await deployAAVEStrategyImpl();
   const aaveStrategy = await deployAAVEStrategy(

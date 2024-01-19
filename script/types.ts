@@ -9,11 +9,12 @@ export enum eEthereumNetwork {
 }
 
 export enum eContractid {
-  MintableToken = "MintableToken",
-  NonMintableToken = "NonMintableToken",
   AaveStrategyImpl = "AaveStrategyImpl",
-  VaultImpl = "VaultImpl",
-  ParallelProxy = "ParallelProxy",
+  ETHAaveStrategyImpl = "ETHAaveStrategyImpl",
+  ETHAaveStrategyProxy= "ETHAaveStrategyProxy",
+  AaveStrategyProxy = "AaveStrategyProxy",
+  XERC20 = "XERC20",
+  LockBox = "LockBox",
 }
 
 export enum Tokens {
@@ -46,16 +47,4 @@ export interface IConfiguration {
   vaultOwner: tEthereumAddress;
   wstETH?: tEthereumAddress;
   Tokens: Partial<Record<Tokens, ITokenConfig>>;
-}
-export enum SuperBridgeContracts {
-  MintableToken = "MintableToken",
-  NonMintableToken = "NonMintableToken",
-  ParallelVault = "ParallelVault",
-  AaveStrategy = "AaveStrategy",
-  VaultProxy = "VaultProxy",
-  VaultImpl = "VaultImpl",
-  Controller = "Controller",
-  FiatTokenV2_1_Controller = "FiatTokenV2_1_Controller",
-  ExchangeRate = "ExchangeRate",
-  ConnectorPlug = "ConnectorPlug",
 }
