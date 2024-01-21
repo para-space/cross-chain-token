@@ -1,8 +1,8 @@
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 import { getMarketConfig } from "../helpers/utils";
-import hre, { ethers } from "hardhat";
-import { XERC20Factory, XERC20Lockbox } from "../../typechain-types";
+import hre from "hardhat";
+import { XERC20Factory } from "../../typechain-types";
 import {
   deployAAVEStrategy,
   deployAAVEStrategyImpl,
@@ -12,6 +12,7 @@ import {
   deployXERC20,
 } from "../helpers/deployment";
 import { Strategy } from "../types";
+import { ZEROADDRESS } from "../helpers/constants";
 
 export const main = async () => {
   console.log("currnet network:", hre.network.name);
@@ -23,15 +24,13 @@ export const main = async () => {
 
   const factory: XERC20Factory = await deployFactory();
 
-  const aaveStrategyImpl = await deployAAVEStrategyImpl();
-
   //deploy xToken and lockbox
   for (const key in marketConfig.Tokens) {
     if (Object.prototype.hasOwnProperty.call(marketConfig.Tokens, key)) {
       const tokenConfig = marketConfig.Tokens[key];
       console.log("deploying for:", tokenConfig.symbol);
 
-      const xERC20Addr = await deployXERC20(
+      const xERC20 = await deployXERC20(
         factory,
         tokenConfig.name,
         tokenConfig.symbol
@@ -39,7 +38,7 @@ export const main = async () => {
       if (tokenConfig.address) {
         const lockBox = await deployLockbox(
           factory,
-          xERC20Addr,
+          await xERC20.getAddress(),
           tokenConfig.address,
           tokenConfig.symbol
         );
@@ -48,9 +47,9 @@ export const main = async () => {
         switch (tokenConfig.strategy) {
           case Strategy.AAVE:
             strategy = await deployAAVEStrategy(
-              aaveStrategyImpl,
+              tokenConfig.symbol,
               tokenConfig.strategyPool,
-              lockBox,
+              await lockBox.getAddress(),
               marketConfig.upgradeAdmin
             );
             break;
@@ -58,7 +57,7 @@ export const main = async () => {
             strategy = await deployETHAAVEStrategy(
               marketConfig.wstETH!,
               tokenConfig.strategyPool,
-              lockBox,
+              await lockBox.getAddress(),
               marketConfig.upgradeAdmin
             );
             break;
@@ -66,11 +65,12 @@ export const main = async () => {
             throw new Error("invalid strategy");
         }
 
-        const lockboxFactory = await ethers.getContractFactory("XERC20Lockbox");
-        const lockBoxContract = lockboxFactory.attach(
-          lockBox
-        ) as unknown as XERC20Lockbox;
-        await lockBoxContract.setStrategy(strategy);
+        const currentStrategy = await lockBox.strategy();
+        if (currentStrategy === ZEROADDRESS) {
+          const strategyAddr = await strategy.getAddress();
+          console.log("set new strategy:", strategyAddr);
+          await lockBox.setStrategy(strategyAddr);
+        }
       }
     }
   }

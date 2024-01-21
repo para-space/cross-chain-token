@@ -11,7 +11,6 @@ import {
 } from "../../typechain-types";
 import {
   deployAAVEStrategy,
-  deployAAVEStrategyImpl,
   deployETHAAVEStrategy,
   deployFactory,
   deployLockbox,
@@ -52,49 +51,37 @@ export const deployFixture = async function () {
   const lido: MockLido = await deployMOCKLICO();
   const wstETH: MockWstETH = await deployMOCKWSTETH(await lido.getAddress());
   const factory: XERC20Factory = await deployFactory();
-  const lockBoxFactory = await hre.ethers.getContractFactory("XERC20Lockbox");
-  const xERC20Factory = await hre.ethers.getContractFactory("XERC20");
 
-  const xERC20Address = await deployXERC20(
+  const xERC20 = await deployXERC20(
     factory,
     "TestTokenName",
     "TestTokenSymbol"
   );
-  const testLockBoxAddress = await deployLockbox(
+  const lockBox = await deployLockbox(
     factory,
-    xERC20Address,
+    await xERC20.getAddress(),
     tokenAddress,
     "TestTokenSymbol"
   );
-  const lockBox = lockBoxFactory.attach(testLockBoxAddress);
-  const xERC20: XERC20 = xERC20Factory.attach(xERC20Address);
-  const ethXERC20Address = await deployXERC20(
+  const ethXERC20 = await deployXERC20(factory, "ETHXERC20", "ETHXERC20");
+  const ethLockBox = await deployLockbox(
     factory,
-    "ETHXERC20",
-    "ETHXERC20"
-  );
-  const ethLockBoxAddress = await deployLockbox(
-    factory,
-    ethXERC20Address,
+    await ethXERC20.getAddress(),
     ZEROADDRESS,
     "ETHXERC20"
   );
 
-  const ethLockBox = lockBoxFactory.attach(ethLockBoxAddress);
-  const ethXERC20: XERC20 = xERC20Factory.attach(ethXERC20Address);
-
-  const aaveStrategyImpl = await deployAAVEStrategyImpl();
   const aaveStrategy = await deployAAVEStrategy(
-    aaveStrategyImpl,
+    "TestTokenSymbol",
     await aave.getAddress(),
-    testLockBoxAddress,
+    await lockBox.getAddress(),
     await user1.getAddress()
   );
 
   const ethStrategy = await deployETHAAVEStrategy(
     await wstETH.getAddress(),
     await aave.getAddress(),
-    ethLockBoxAddress,
+    await ethLockBox.getAddress(),
     await user1.getAddress()
   );
 

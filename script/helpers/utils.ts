@@ -36,11 +36,6 @@ export const getDeployInfo = () => {
   return deploymentAddresses;
 };
 
-export const getContractDeployInfo = async (key: string) => {
-  const deploymentAddresses = getDeployInfo();
-  return deploymentAddresses[key] as DeployInfo;
-};
-
 export const storeDeployInfo = async (key: string, info: DeployInfo) => {
   if (!fs.existsSync(deploymentsPath)) {
     await fs.promises.mkdir(deploymentsPath, { recursive: true });

@@ -1,0 +1,185 @@
+{
+  "XERC20Factory": {
+    "address": "0x14E5B405bdAC930B468d60ddA77d39F8973108a9",
+    "constructorArgs": []
+  },
+  "AaveStrategyImpl": {
+    "address": "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+    "constructorArgs": []
+  },
+  "XERC20-WETH": {
+    "address": "0x59380ef21359b28f2b31bd9efe006ee5523e09e6",
+    "constructorArgs": [
+      "xWrapped Ether",
+      "xWETH",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-WETH": {
+    "address": "0xb79c1f17f8ea66299778ac26c85a37b4caa028e1",
+    "constructorArgs": [
+      "0x59380ef21359b28f2b31bd9efe006ee5523e09e6",
+      "0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-WETH": {
+    "address": "0x5D52c32Ab79f1eB749324f64cF08A94d224e1C7F",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff738951000000000000000000000000b79c1f17f8ea66299778ac26c85a37b4caa028e1"
+    ]
+  },
+  "XERC20-USDT": {
+    "address": "0xb916e297d157b9432cc3a5de06c863a4476d2fba",
+    "constructorArgs": [
+      "xTether USD",
+      "xUSDT",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-USDT": {
+    "address": "0xdc61e0369aff02989956dfacb5be5cbc9700a936",
+    "constructorArgs": [
+      "0xb916e297d157b9432cc3a5de06c863a4476d2fba",
+      "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-USDT": {
+    "address": "0x84478b001fB945BFDcFA8A8040a2b522620007FD",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff738951000000000000000000000000dc61e0369aff02989956dfacb5be5cbc9700a936"
+    ]
+  },
+  "XERC20-AAVE": {
+    "address": "0xd6e0c091e593f5e57fbffb5ef228869b81a2cf9a",
+    "constructorArgs": [
+      "xAave Token",
+      "xAAVE",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-AAVE": {
+    "address": "0x4e60b7f606f9d3a597f1094c9b36a9df80f4a664",
+    "constructorArgs": [
+      "0xd6e0c091e593f5e57fbffb5ef228869b81a2cf9a",
+      "0x88541670E55cC00bEEFD87eB59EDd1b7C511AC9a",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-AAVE": {
+    "address": "0x519a3dDA2228eB93A82C01C8Ca48FAbd301AD152",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff7389510000000000000000000000004e60b7f606f9d3a597f1094c9b36a9df80f4a664"
+    ]
+  },
+  "XERC20-DAI": {
+    "address": "0xc1a3ed92614381310a7505c8f5c87f1eb6bf9fa7",
+    "constructorArgs": [
+      "xDai Stablecoin",
+      "xDAI",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-DAI": {
+    "address": "0xeac8ae44c9f9e2fe99b21fbd69ae9686822ffe1d",
+    "constructorArgs": [
+      "0xc1a3ed92614381310a7505c8f5c87f1eb6bf9fa7",
+      "0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-DAI": {
+    "address": "0xEeDA5BAcd654552a526266e96E554a5688E80eb2",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff738951000000000000000000000000eac8ae44c9f9e2fe99b21fbd69ae9686822ffe1d"
+    ]
+  },
+  "XERC20-LINK": {
+    "address": "0x5b419c79fc758363bacbd50b994c9e6b758fb963",
+    "constructorArgs": [
+      "xChainLink Token",
+      "xLINK",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-LINK": {
+    "address": "0x46f733554d490ad75f406b40d1a59f931b044e93",
+    "constructorArgs": [
+      "0x5b419c79fc758363bacbd50b994c9e6b758fb963",
+      "0xf8Fb3713D459D7C1018BD0A49D19b4C44290EBE5",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-LINK": {
+    "address": "0x017e171d540593A0fcB4953799839a665bef5A27",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff73895100000000000000000000000046f733554d490ad75f406b40d1a59f931b044e93"
+    ]
+  },
+  "XERC20-USDC": {
+    "address": "0x47a5aeb48e6856c758b300d573e7ceb46b8b9214",
+    "constructorArgs": [
+      "xUSD Coin",
+      "xUSDC",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-USDC": {
+    "address": "0x22bf11994ac5f1e92cedaba576968ad6036c00e1",
+    "constructorArgs": [
+      "0x47a5aeb48e6856c758b300d573e7ceb46b8b9214",
+      "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-USDC": {
+    "address": "0x03b5E24D95a3cD6C73c7af545f5aE8069f84e911",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff73895100000000000000000000000022bf11994ac5f1e92cedaba576968ad6036c00e1"
+    ]
+  },
+  "XERC20-WBTC": {
+    "address": "0x7c0bb6b39464f6bfaa3cddeb316efc67adc2e4b7",
+    "constructorArgs": [
+      "xWrapped BTC",
+      "xWBTC",
+      "0x14E5B405bdAC930B468d60ddA77d39F8973108a9"
+    ]
+  },
+  "LockBox-WBTC": {
+    "address": "0x8f9d0284469002b7ee157e513b4525bc0bae002d",
+    "constructorArgs": [
+      "0x7c0bb6b39464f6bfaa3cddeb316efc67adc2e4b7",
+      "0x29f2D40B0605204364af54EC677bD022dA425d03",
+      false,
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "AaveStrategyProxy-WBTC": {
+    "address": "0x4bEe825690e92055179cE501159954e3fF6e93e0",
+    "constructorArgs": [
+      "0x987E1A0745DF80780D41D42065F815F5f96a2Af1",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff7389510000000000000000000000008f9d0284469002b7ee157e513b4525bc0bae002d"
+    ]
+  }
+}
