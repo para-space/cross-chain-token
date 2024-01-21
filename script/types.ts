@@ -11,7 +11,7 @@ export enum eEthereumNetwork {
 export enum eContractid {
   AaveStrategyImpl = "AaveStrategyImpl",
   ETHAaveStrategyImpl = "ETHAaveStrategyImpl",
-  ETHAaveStrategyProxy= "ETHAaveStrategyProxy",
+  ETHAaveStrategyProxy = "ETHAaveStrategyProxy",
   AaveStrategyProxy = "AaveStrategyProxy",
   XERC20 = "XERC20",
   LockBox = "LockBox",
@@ -36,8 +36,10 @@ export enum Strategy {
 }
 
 export interface ITokenConfig {
-  address: tEthereumAddress;
-  strategy: Strategy;
+  name: string;
+  symbol: string;
+  address?: tEthereumAddress;
+  strategy?: Strategy;
   strategyPool?: tEthereumAddress;
   strategyOwner?: tEthereumAddress;
 }

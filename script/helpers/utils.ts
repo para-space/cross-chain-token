@@ -1,4 +1,4 @@
-import hre, { network } from "hardhat";
+import hre, { network, run } from "hardhat";
 import { EAConfigs } from "./constants";
 import { eEthereumNetwork, IConfiguration } from "../types";
 import fs from "fs";
@@ -12,6 +12,34 @@ export interface DeployInfo {
 }
 
 export type ProjectAddresses = Record<string, DeployInfo>;
+
+export const clearDeployInfo = () => {
+  const addressesPath = deploymentsPath + `${hre.network.name}_addresses.json`;
+  if (fs.existsSync(addressesPath)) {
+    let deploymentAddresses: ProjectAddresses = {};
+    fs.writeFileSync(
+      addressesPath,
+      JSON.stringify(deploymentAddresses, null, 2)
+    );
+  }
+};
+
+export const getDeployInfo = () => {
+  const addressesPath = deploymentsPath + `${hre.network.name}_addresses.json`;
+  if (!fs.existsSync(addressesPath)) {
+    return {};
+  }
+  const deploymentAddressesString = fs.readFileSync(addressesPath, "utf-8");
+  let deploymentAddresses: ProjectAddresses = JSON.parse(
+    deploymentAddressesString
+  );
+  return deploymentAddresses;
+};
+
+export const getContractDeployInfo = async (key: string) => {
+  const deploymentAddresses = getDeployInfo();
+  return deploymentAddresses[key] as DeployInfo;
+};
 
 export const storeDeployInfo = async (key: string, info: DeployInfo) => {
   if (!fs.existsSync(deploymentsPath)) {
@@ -27,6 +55,17 @@ export const storeDeployInfo = async (key: string, info: DeployInfo) => {
   }
   deploymentAddresses[key] = info;
   fs.writeFileSync(addressesPath, JSON.stringify(deploymentAddresses, null, 2));
+};
+
+export const verify = async (address: string, args: any[]) => {
+  try {
+    await run("verify:verify", {
+      address,
+      constructorArguments: args,
+    });
+  } catch (error) {
+    console.log("Error during verification", error);
+  }
 };
 
 export const getMarketConfig = (): IConfiguration => {

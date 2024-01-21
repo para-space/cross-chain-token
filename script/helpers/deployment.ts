@@ -1,4 +1,4 @@
-import {eContractid, tEthereumAddress} from "../types";
+import { eContractid, tEthereumAddress } from "../types";
 import hre, { ethers } from "hardhat";
 import {
   AaveStrategy,
@@ -8,11 +8,15 @@ import {
   MockAAVE,
   MockLido,
   MockWstETH,
-  XERC20,
   XERC20Factory,
 } from "../../typechain-types";
 import { overrides } from "./networks";
-import { storeDeployInfo } from "./utils";
+import {
+  DeployInfo,
+  getContractDeployInfo,
+  getDeployInfo,
+  storeDeployInfo,
+} from "./utils";
 import { ZEROADDRESS } from "./constants";
 
 export const getERC20 = async (address: tEthereumAddress) => {
@@ -20,7 +24,17 @@ export const getERC20 = async (address: tEthereumAddress) => {
   return ERC20Factory.attach(address) as unknown as ERC20;
 };
 
+const checkDeployed = (key: string) => {
+  const deployInfo = getDeployInfo();
+  return !!deployInfo[key];
+};
+
 export const deployFactory = async () => {
+  const ContractKey = "XERC20Factory";
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
   const XERC20FactoryFactory = await ethers.getContractFactory("XERC20Factory");
   const XERC20Factory = await XERC20FactoryFactory.deploy({
     ...overrides[hre.network.name],
@@ -28,12 +42,10 @@ export const deployFactory = async () => {
   await XERC20Factory.deploymentTransaction().wait(1);
 
   const factoryAddr = await XERC20Factory.getAddress();
-  await storeDeployInfo("XERC20Factory", {
+  await storeDeployInfo(ContractKey, {
     address: factoryAddr,
     constructorArgs: [],
   });
-
-  console.log("XERC20Factory deployed to:", factoryAddr);
 
   return XERC20FactoryFactory.attach(factoryAddr) as unknown as XERC20Factory;
 };
@@ -43,6 +55,11 @@ export const deployXERC20 = async (
   tokenName: string,
   tokenSymbol: string
 ) => {
+  const ContractKey = `${eContractid.XERC20}-${tokenSymbol}`;
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
   const xTokenName = `x${tokenName}`;
   const xTokenSymbol = `x${tokenSymbol}`;
   const deployTx = await factory.deployXERC20(
@@ -59,12 +76,10 @@ export const deployXERC20 = async (
   const logLength = xERC20Receipt.logs.length;
   const xERC20Addr = `0x${xERC20Receipt.logs[logLength - 1].data.slice(26)}`;
 
-  await storeDeployInfo(`${eContractid.XERC20}-${tokenSymbol}`, {
+  await storeDeployInfo(ContractKey, {
     address: xERC20Addr,
     constructorArgs: [xTokenName, xTokenSymbol, await factory.getAddress()],
   });
-
-  console.log(`XERC20-${tokenSymbol} deployed to: ${xERC20Addr}`);
 
   return xERC20Addr;
 };
@@ -75,6 +90,11 @@ export const deployLockbox = async (
   token: string,
   tokenSymbol: string
 ) => {
+  const ContractKey = `${eContractid.LockBox}-${tokenSymbol}`;
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
   const isGasToken = token === ZEROADDRESS;
   const deployTx = await factory.deployLockbox(xToken, token, isGasToken, {
     ...overrides[hre.network.name],
@@ -83,29 +103,56 @@ export const deployLockbox = async (
   const logLength = xERC20Receipt.logs.length;
   const lockBoxAddr = `0x${xERC20Receipt.logs[logLength - 1].data.slice(26)}`;
 
-  await storeDeployInfo(`${eContractid.LockBox}-${tokenSymbol}`, {
+  await storeDeployInfo(ContractKey, {
     address: lockBoxAddr,
     constructorArgs: [xToken, token, isGasToken, xERC20Receipt.from],
   });
-
-  console.log(`LockBox-${tokenSymbol} deployed to: ${lockBoxAddr}`);
 
   return lockBoxAddr;
 };
 
 export const deployAAVEStrategyImpl = async () => {
+  const ContractKey = eContractid.AaveStrategyImpl;
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
   const AaveStrategyFactory = await ethers.getContractFactory("AaveStrategy");
   const AaveStrategyImpl = await AaveStrategyFactory.deploy({
     ...overrides[hre.network.name],
   });
   await AaveStrategyImpl.deploymentTransaction().wait(1);
   const implAddress = await AaveStrategyImpl.getAddress();
-  await storeDeployInfo(eContractid.AaveStrategyImpl, {
+  await storeDeployInfo(ContractKey, {
     address: implAddress,
     constructorArgs: [],
   });
 
-  console.log("AaveStrategyImpl deployed to:", implAddress);
+  return implAddress;
+};
+
+export const deployETHAAVEStrategyImpl = async (
+  wstETH: tEthereumAddress,
+  aave: tEthereumAddress,
+  vault: tEthereumAddress
+) => {
+  const ContractKey = eContractid.ETHAaveStrategyImpl;
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
+  const ETHAaveStrategyFactory = await ethers.getContractFactory(
+    "ETHAaveStrategy"
+  );
+  const IMPL = await ETHAaveStrategyFactory.deploy(wstETH, aave, vault, {
+    ...overrides[hre.network.name],
+  });
+  await IMPL.deploymentTransaction().wait(1);
+  const implAddress = await IMPL.getAddress();
+  await storeDeployInfo(ContractKey, {
+    address: implAddress,
+    constructorArgs: [wstETH, aave, vault],
+  });
 
   return implAddress;
 };
@@ -116,6 +163,11 @@ export const deployAAVEStrategy = async (
   vault: tEthereumAddress,
   proxyAdmin: tEthereumAddress
 ) => {
+  const ContractKey = eContractid.AaveStrategyProxy;
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
   const AaveStrategyFactory = await ethers.getContractFactory("AaveStrategy");
   const initData = AaveStrategyFactory.interface.encodeFunctionData(
     "initialize",
@@ -148,20 +200,21 @@ export const deployETHAAVEStrategy = async (
   vault: tEthereumAddress,
   proxyAdmin: tEthereumAddress
 ) => {
+  const ContractKey = eContractid.ETHAaveStrategyProxy;
+  if (checkDeployed(ContractKey)) {
+    return;
+  }
+
+  await deployETHAAVEStrategyImpl(wstETH, aave, vault);
+
+  const implDeploy: DeployInfo = await getContractDeployInfo(
+    eContractid.ETHAaveStrategyImpl
+  );
+  const implAddress = implDeploy.address;
+
   const ETHAaveStrategyFactory = await ethers.getContractFactory(
     "ETHAaveStrategy"
   );
-  const IMPL = await ETHAaveStrategyFactory.deploy(wstETH, aave, vault, {
-    ...overrides[hre.network.name],
-  });
-  await IMPL.deploymentTransaction().wait(1);
-  const implAddress = await IMPL.getAddress();
-  await storeDeployInfo(eContractid.ETHAaveStrategyImpl, {
-    address: implAddress,
-    constructorArgs: [wstETH, aave, vault],
-  });
-  console.log("ETHAAVEStrategy IMPL deployed to:", implAddress);
-
   const initData = ETHAaveStrategyFactory.interface.encodeFunctionData(
     "initialize",
     []
@@ -177,12 +230,10 @@ export const deployETHAAVEStrategy = async (
   );
   await ParallelProxy.deploymentTransaction().wait(1);
   const proxyAddr = await ParallelProxy.getAddress();
-  await storeDeployInfo(eContractid.ETHAaveStrategyProxy, {
+  await storeDeployInfo(ContractKey, {
     address: proxyAddr,
     constructorArgs: [implAddress, proxyAdmin, initData],
   });
-
-  console.log("ETHAAVEStrategy Proxy deployed to:", proxyAddr);
 
   return ETHAaveStrategyFactory.attach(proxyAddr) as unknown as ETHAaveStrategy;
 };

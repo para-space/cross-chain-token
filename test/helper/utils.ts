@@ -22,6 +22,7 @@ import {
   deployXERC20,
 } from "../../script/helpers/deployment";
 import { ZEROADDRESS } from "../../script/helpers/constants";
+import { clearDeployInfo, getDeployInfo } from "../../script/helpers/utils";
 
 const hre = require("hardhat");
 
@@ -43,12 +44,13 @@ export interface TestDeploymentEnv {
 export const deployFixture = async function () {
   const [, user1] = await hre.ethers.getSigners();
 
+  clearDeployInfo();
+
   const erc20: MintableERC20 = await deployMintableERC20();
   const tokenAddress = await erc20.getAddress();
   const aave: MockAAVE = await deployMOCKAAVE();
   const lido: MockLido = await deployMOCKLICO();
   const wstETH: MockWstETH = await deployMOCKWSTETH(await lido.getAddress());
-
   const factory: XERC20Factory = await deployFactory();
   const lockBoxFactory = await hre.ethers.getContractFactory("XERC20Lockbox");
   const xERC20Factory = await hre.ethers.getContractFactory("XERC20");
@@ -66,7 +68,6 @@ export const deployFixture = async function () {
   );
   const lockBox = lockBoxFactory.attach(testLockBoxAddress);
   const xERC20: XERC20 = xERC20Factory.attach(xERC20Address);
-
   const ethXERC20Address = await deployXERC20(
     factory,
     "ETHXERC20",
