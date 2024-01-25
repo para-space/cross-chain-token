@@ -2,15 +2,20 @@ import { eContractid, tEthereumAddress } from "../types";
 import hre, { ethers } from "hardhat";
 import {
   AaveStrategy,
+  ApeStakingStrategy,
   ERC20,
   ETHAaveStrategy,
   MintableERC20,
+  MintableERC721,
   MockAAVE,
   MockLido,
   MockWstETH,
   XERC20,
   XERC20Factory,
   XERC20Lockbox,
+  XERC721,
+  XERC721Factory,
+  XERC721Lockbox,
 } from "../../typechain-types";
 import { overrides } from "./networks";
 import { getDeployInfo, storeDeployInfo } from "./utils";
@@ -32,7 +37,7 @@ const getDeployed = (key: string) => {
 
 export const deployFactory = async () => {
   const XERC20FactoryFactory = await ethers.getContractFactory("XERC20Factory");
-  const ContractKey = "XERC20Factory";
+  const ContractKey = eContractid.XERC20Factory;
   let factoryAddr = getDeployed(ContractKey);
   if (!factoryAddr) {
     const XERC20Factory = await XERC20FactoryFactory.deploy({
@@ -239,6 +244,90 @@ export const deployETHAAVEStrategy = async (
   return ETHAaveStrategyFactory.attach(proxyAddr) as unknown as ETHAaveStrategy;
 };
 
+export const deployERC721Factory = async () => {
+  const XERC721FactoryFactory = await ethers.getContractFactory(
+    "XERC721Factory"
+  );
+  const ContractKey = eContractid.XERC721Factory;
+  let factoryAddr = getDeployed(ContractKey);
+  if (!factoryAddr) {
+    const XERC721Factory = await XERC721FactoryFactory.deploy({
+      ...overrides[hre.network.name],
+    });
+    await XERC721Factory.deploymentTransaction().wait(1);
+
+    factoryAddr = await XERC721Factory.getAddress();
+    await storeDeployInfo(ContractKey, {
+      address: factoryAddr,
+      constructorArgs: [],
+    });
+  }
+
+  return XERC721FactoryFactory.attach(factoryAddr) as unknown as XERC721Factory;
+};
+
+export const deployXERC721 = async (
+  factory: XERC721Factory,
+  tokenName: string,
+  tokenSymbol: string
+) => {
+  const XERC721Factory = await ethers.getContractFactory("XERC721");
+  const ContractKey = `${eContractid.XERC721}-${tokenSymbol}`;
+  let xERC721Addr = getDeployed(ContractKey);
+  if (!xERC721Addr) {
+    const xTokenName = `x${tokenName}`;
+    const xTokenSymbol = `x${tokenSymbol}`;
+    const deployTx = await factory.deployXERC721(
+      xTokenName,
+      xTokenSymbol,
+      [],
+      [],
+      [],
+      {
+        ...overrides[hre.network.name],
+      }
+    );
+    const xERC20Receipt = await deployTx.wait(1);
+    const logLength = xERC20Receipt.logs.length;
+    xERC721Addr = `0x${xERC20Receipt.logs[logLength - 1].data.slice(26)}`;
+
+    await storeDeployInfo(ContractKey, {
+      address: xERC721Addr,
+      constructorArgs: [xTokenName, xTokenSymbol, await factory.getAddress()],
+    });
+  }
+
+  return XERC721Factory.attach(xERC721Addr) as unknown as XERC721;
+};
+
+export const deployERC721Lockbox = async (
+  factory: XERC721Factory,
+  xToken: string,
+  token: string,
+  tokenSymbol: string
+) => {
+  const XERC721LockboxFactory = await ethers.getContractFactory(
+    "XERC721Lockbox"
+  );
+  const ContractKey = `${eContractid.ERC721LockBox}-${tokenSymbol}`;
+  let lockBoxAddr = getDeployed(ContractKey);
+  if (!lockBoxAddr) {
+    const deployTx = await factory.deployXERC721Lockbox(xToken, token, {
+      ...overrides[hre.network.name],
+    });
+    const xERC721Receipt = await deployTx.wait(1);
+    const logLength = xERC721Receipt.logs.length;
+    lockBoxAddr = `0x${xERC721Receipt.logs[logLength - 1].data.slice(26)}`;
+
+    await storeDeployInfo(ContractKey, {
+      address: lockBoxAddr,
+      constructorArgs: [xToken, token, xERC721Receipt.from],
+    });
+  }
+
+  return XERC721LockboxFactory.attach(lockBoxAddr) as unknown as XERC721Lockbox;
+};
+
 export const deployMOCKAAVE = async () => {
   const MockAAVEFactory = await ethers.getContractFactory("MockAAVE");
 
@@ -285,4 +374,130 @@ export const deployMintableERC20 = async () => {
   await token.deploymentTransaction().wait(1);
 
   return token as unknown as MintableERC20;
+};
+
+export const deployMintableERC721 = async (symbol: string) => {
+  const MintableERC721Factory = await ethers.getContractFactory(
+    "MintableERC721"
+  );
+
+  const token = await MintableERC721Factory.deploy(symbol, symbol, "", {
+    ...overrides[hre.network.name],
+  });
+  await token.deploymentTransaction().wait(1);
+
+  return token as unknown as MintableERC721;
+};
+
+export const deployApeStakingStrategyImpl = async (
+  baycVaultAddr: tEthereumAddress,
+  maycVaultAddr: tEthereumAddress,
+  bakcVaultAddr: tEthereumAddress
+) => {
+  const ApeStakingFactory = await ethers.getContractFactory(
+    "ApeStakingStrategy"
+  );
+  const ContractKey = eContractid.ApeStakingStrategyImpl;
+  let implAddress = getDeployed(ContractKey);
+  if (!implAddress) {
+    const apeStakingStrategy = await ApeStakingFactory.deploy(
+      baycVaultAddr,
+      maycVaultAddr,
+      bakcVaultAddr,
+      {
+        ...overrides[hre.network.name],
+      }
+    );
+    await apeStakingStrategy.deploymentTransaction().wait(1);
+    implAddress = await apeStakingStrategy.getAddress();
+    await storeDeployInfo(ContractKey, {
+      address: implAddress,
+      constructorArgs: [baycVaultAddr, maycVaultAddr, bakcVaultAddr],
+    });
+  }
+
+  return ApeStakingFactory.attach(implAddress) as unknown as ApeStakingStrategy;
+};
+
+export const deployApeStakingStrategy = async (
+  proxyAdmin: tEthereumAddress
+) => {
+  const baycVaultKey = `${eContractid.ERC721LockBox}-BAYC`;
+  const baycVaultAddr = getDeployed(baycVaultKey);
+  if (!baycVaultAddr) {
+    console.log("skip, bayc lockbox not ready");
+    return null;
+  }
+
+  const maycVaultKey = `${eContractid.ERC721LockBox}-MAYC`;
+  const maycVaultAddr = getDeployed(maycVaultKey);
+  if (!maycVaultAddr) {
+    console.log("skip, mayc lockbox not ready");
+    return null;
+  }
+
+  const bakcVaultKey = `${eContractid.ERC721LockBox}-BAKC`;
+  const bakcVaultAddr = getDeployed(bakcVaultKey);
+  if (!bakcVaultAddr) {
+    console.log("skip, bakc lockbox not ready");
+    return null;
+  }
+
+  const ApeStakingFactory = await ethers.getContractFactory(
+    "ApeStakingStrategy"
+  );
+  const ContractKey = eContractid.ApeStakingStrategyProxy;
+  let proxyAddr = getDeployed(ContractKey);
+  if (!proxyAddr) {
+    const implAddress = await (
+      await deployApeStakingStrategyImpl(
+        baycVaultAddr,
+        maycVaultAddr,
+        bakcVaultAddr
+      )
+    ).getAddress();
+    const initData = ApeStakingFactory.interface.encodeFunctionData(
+      "initialize",
+      []
+    );
+
+    const ParallelProxyFactory = await ethers.getContractFactory(
+      "ParallelProxy"
+    );
+    const ParallelProxy = await ParallelProxyFactory.deploy(
+      implAddress,
+      proxyAdmin,
+      initData,
+      {
+        ...overrides[hre.network.name],
+      }
+    );
+    await ParallelProxy.deploymentTransaction().wait(1);
+
+    proxyAddr = await ParallelProxy.getAddress();
+    await storeDeployInfo(ContractKey, {
+      address: proxyAddr,
+      constructorArgs: [implAddress, proxyAdmin, initData],
+    });
+  }
+
+  //set strategy
+  const XERC721LockboxFactory = await ethers.getContractFactory(
+    "XERC721Lockbox"
+  );
+  const baycVault = XERC721LockboxFactory.attach(
+    baycVaultAddr
+  ) as unknown as XERC721Lockbox;
+  const maycVault = XERC721LockboxFactory.attach(
+    maycVaultAddr
+  ) as unknown as XERC721Lockbox;
+  const bakcVault = XERC721LockboxFactory.attach(
+    bakcVaultAddr
+  ) as unknown as XERC721Lockbox;
+
+  await baycVault.setStrategy(proxyAddr);
+  await maycVault.setStrategy(proxyAddr);
+  await bakcVault.setStrategy(proxyAddr);
+
+  return ApeStakingFactory.attach(proxyAddr) as unknown as ApeStakingStrategy;
 };

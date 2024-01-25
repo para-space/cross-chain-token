@@ -11,7 +11,7 @@ const {
   loadFixture,
 } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 
-describe("XERC20 TEST", function () {
+describe("XERC20 LockBox TEST", function () {
   it("ERC20 with AAVE strategy operation function as expected", async function () {
     const [owner, user] = await hre.ethers.getSigners();
     const testENV: TestDeploymentEnv = await loadFixture(deployFixture);
