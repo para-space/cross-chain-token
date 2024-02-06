@@ -11,6 +11,7 @@ import {
   deployETHAAVEStrategy,
   deployFactory,
   deployLockbox,
+  deploySocketAdapter,
   deployXERC20,
   deployXERC721,
 } from "../helpers/deployment";
@@ -23,6 +24,10 @@ export const main = async () => {
   if (!marketConfig || !marketConfig.Tokens) {
     console.log("No market token config");
     return;
+  }
+
+  if (marketConfig.socketConfig) {
+    await deploySocketAdapter(marketConfig.socketConfig.socketBridge);
   }
 
   let erc20Factory: XERC20Factory;

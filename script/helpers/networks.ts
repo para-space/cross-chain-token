@@ -32,17 +32,17 @@ export const overrides: {
   [eEthereumNetwork.sepolia]: {
     type: 2,
     gasLimit,
-    maxFeePerGas: 30_000_000_000,
+    maxFeePerGas: 50_000_000_000,
     maxPriorityFeePerGas: 1_000_000_000,
   },
   [eEthereumNetwork.arbitrum]: {
-    type,
-    gasLimit: 20_000_000,
-    gasPrice,
+    type: 1,
+    gasLimit: 500_000_000,
+    gasPrice: 1_000_000_000,
   },
   [eEthereumNetwork.arbitrumSepolia]: {
     type: 1,
-    gasLimit: 3_000_000,
-    gasPrice: 100_000_000,
+    gasLimit: 500_000_000,
+    gasPrice: 1_000_000_000,
   },
 };

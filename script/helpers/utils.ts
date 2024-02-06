@@ -24,8 +24,9 @@ export const clearDeployInfo = () => {
   }
 };
 
-export const getDeployInfo = () => {
-  const addressesPath = deploymentsPath + `${hre.network.name}_addresses.json`;
+export const getDeployInfo = (network?: string) => {
+  const networkName = network ?? hre.network.name;
+  const addressesPath = deploymentsPath + `${networkName}_addresses.json`;
   if (!fs.existsSync(addressesPath)) {
     return {};
   }

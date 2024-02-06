@@ -181,5 +181,77 @@
       "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
       "0x485cc9550000000000000000000000006ae43d3271ff6888e7fc43fd7321a503ff7389510000000000000000000000008f9d0284469002b7ee157e513b4525bc0bae002d"
     ]
+  },
+  "XERC721Factory": {
+    "address": "0x4f189E510c2BA49fA4cBEB45881fF593333B4487",
+    "constructorArgs": []
+  },
+  "XERC721-BAYC": {
+    "address": "0x35f7565f0dcc3455dd803ec4c77dcbc284eea640",
+    "constructorArgs": [
+      "xBoredApeYachtClub",
+      "xBAYC",
+      "0x4f189E510c2BA49fA4cBEB45881fF593333B4487"
+    ]
+  },
+  "ERC721LockBox-BAYC": {
+    "address": "0x007702bb519bba4c06266d70b4a1a060192531e4",
+    "constructorArgs": [
+      "0x35f7565f0dcc3455dd803ec4c77dcbc284eea640",
+      "0x5f45CA92B70D37C672E4a4aAC066d38aC5da7a25",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "XERC721-MAYC": {
+    "address": "0xbf261e67559cf2b884c6a83ed0a82f40d82edd9a",
+    "constructorArgs": [
+      "xMutantApeYachtClub",
+      "xMAYC",
+      "0x4f189E510c2BA49fA4cBEB45881fF593333B4487"
+    ]
+  },
+  "ERC721LockBox-MAYC": {
+    "address": "0x04f0ca6fda4c42aa5143aa327bb0b5c183f7084e",
+    "constructorArgs": [
+      "0xbf261e67559cf2b884c6a83ed0a82f40d82edd9a",
+      "0x8d2Fd271D85b3bb23209f075fB869c4f71652904",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "XERC721-BAKC": {
+    "address": "0x5db2cdbc73842e86e80fe3aa33d6033028826ec6",
+    "constructorArgs": [
+      "xBoredApeKennelClub",
+      "xBAKC",
+      "0x4f189E510c2BA49fA4cBEB45881fF593333B4487"
+    ]
+  },
+  "ERC721LockBox-BAKC": {
+    "address": "0xf886ed5a5d30988c200e04dd77a13b32406e3ca8",
+    "constructorArgs": [
+      "0x5db2cdbc73842e86e80fe3aa33d6033028826ec6",
+      "0x3D5913140b3B6F03B545e2703D7910bc1b476203",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB"
+    ]
+  },
+  "ApeStakingStrategyImpl": {
+    "address": "0x86A291c4CFDF593B3b784347FEeBC2Ffc6F710eF",
+    "constructorArgs": [
+      "0x007702bb519bba4c06266d70b4a1a060192531e4",
+      "0x04f0ca6fda4c42aa5143aa327bb0b5c183f7084e",
+      "0xf886ed5a5d30988c200e04dd77a13b32406e3ca8"
+    ]
+  },
+  "ApeStakingStrategyProxy": {
+    "address": "0x755B7cFCf7BD45d845A2d3e43176e9038e6d554E",
+    "constructorArgs": [
+      "0x86A291c4CFDF593B3b784347FEeBC2Ffc6F710eF",
+      "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+      "0x8129fc1c"
+    ]
+  },
+  "SocketAdapter": {
+    "address": "0xf7fB70838A521B6578a616D858f3b78DF098CeAE",
+    "constructorArgs": ["0x07e11D1A1543B0D0b91684eb741d1ab7D51ae237"]
   }
 }

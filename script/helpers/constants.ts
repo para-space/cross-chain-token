@@ -13,6 +13,9 @@ export const ZEROADDRESS = "0x0000000000000000000000000000000000000000";
 export const SepoliaConfig: IConfiguration = {
   upgradeAdmin: "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
   vaultOwner: "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+  socketConfig: {
+    socketBridge: "0x07e11D1A1543B0D0b91684eb741d1ab7D51ae237",
+  },
   Tokens: {
     DAI: {
       tokenType: TokenType.ERC20,
@@ -97,9 +100,29 @@ export const SepoliaConfig: IConfiguration = {
   },
 };
 
+export const ArbitrumSepoliaConfig: IConfiguration = {
+  upgradeAdmin: "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+  vaultOwner: "0x018281853eCC543Aa251732e8FDaa7323247eBeB",
+  socketConfig: {
+    socketBridge: "0xEA59E2b1539b514290dD3dCEa989Ea36279aC6F2",
+  },
+  Tokens: {
+    DAI: {
+      tokenType: TokenType.ERC20,
+      name: "Dai Stablecoin",
+      symbol: "DAI",
+    },
+    BAYC: {
+      tokenType: TokenType.ERC721,
+      name: "BoredApeYachtClub",
+      symbol: "BAYC",
+    },
+  },
+};
+
 export const EAConfigs: Partial<Record<eEthereumNetwork, IConfiguration>> = {
   //[eEthereumNetwork.hardhat]: HardhatConfig,
   //[eEthereumNetwork.mainnet]: MainnetConfig,
   [eEthereumNetwork.sepolia]: SepoliaConfig,
-  //[eEthereumNetwork.arbitrum]: ArbitrumConfig,
+  [eEthereumNetwork.arbitrumSepolia]: ArbitrumSepoliaConfig,
 };

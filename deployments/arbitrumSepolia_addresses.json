@@ -1,0 +1,30 @@
+{
+  "XERC20Factory": {
+    "address": "0x9FA82e5f8956BC6E4B22c0d3642144DC49a4bFFC",
+    "constructorArgs": []
+  },
+  "XERC20-DAI": {
+    "address": "0xb48b87687e35ed1d0d99296e0f6ff5c0b46e360e",
+    "constructorArgs": [
+      "xDai Stablecoin",
+      "xDAI",
+      "0x9FA82e5f8956BC6E4B22c0d3642144DC49a4bFFC"
+    ]
+  },
+  "XERC721Factory": {
+    "address": "0x8C11799Fe1696aAB140ca1c922Ecf6CcF09cd11F",
+    "constructorArgs": []
+  },
+  "XERC721-BAYC": {
+    "address": "0xda0ceed2a87b829928e8e9925961a73b82609185",
+    "constructorArgs": [
+      "xBoredApeYachtClub",
+      "xBAYC",
+      "0x8C11799Fe1696aAB140ca1c922Ecf6CcF09cd11F"
+    ]
+  },
+  "SocketAdapter": {
+    "address": "0xbCA625aA516AC07248C41E2A0eBec56717160f5A",
+    "constructorArgs": ["0xEA59E2b1539b514290dD3dCEa989Ea36279aC6F2"]
+  }
+}

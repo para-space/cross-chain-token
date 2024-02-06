@@ -21,6 +21,7 @@ export enum eContractid {
   ERC721LockBox = "ERC721LockBox",
   ApeStakingStrategyImpl = "ApeStakingStrategyImpl",
   ApeStakingStrategyProxy = "ApeStakingStrategyProxy",
+  SocketAdapter = "SocketAdapter",
 }
 
 export enum Tokens {
@@ -60,9 +61,14 @@ export interface ITokenConfig {
   strategyOwner?: tEthereumAddress;
 }
 
+export interface ISocketConfig {
+  socketBridge: tEthereumAddress;
+}
+
 export interface IConfiguration {
   upgradeAdmin: tEthereumAddress;
   vaultOwner: tEthereumAddress;
   wstETH?: tEthereumAddress;
+  socketConfig?: ISocketConfig;
   Tokens: Partial<Record<Tokens, ITokenConfig>>;
 }

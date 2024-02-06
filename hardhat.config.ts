@@ -13,7 +13,7 @@ import fs from "fs";
 import { eEthereumNetwork } from "./script/types";
 import {
   ARBITRUM_ETHERSCAN_KEY,
-  ARBITRUM_GOERLI_ETHERSCAN_KEY,
+  ARBITRUM_SEPOLIA_ETHERSCAN_KEY,
   BROWSER_URLS,
   CHAIN_ID,
   ETHERSCAN_APIS,
@@ -53,7 +53,7 @@ const config: HardhatUserConfig = {
       mainnet: ETHERSCAN_KEY,
       sepolia: ETHERSCAN_KEY,
       arbitrum: ARBITRUM_ETHERSCAN_KEY,
-      arbitrumGoerli: ARBITRUM_GOERLI_ETHERSCAN_KEY,
+      arbitrumSepolia: ARBITRUM_SEPOLIA_ETHERSCAN_KEY,
     },
     customChains: [
       eEthereumNetwork.mainnet,
