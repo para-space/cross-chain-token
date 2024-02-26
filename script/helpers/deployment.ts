@@ -406,12 +406,20 @@ export const deployMOCKWSTETH = async (stETH: tEthereumAddress) => {
 export const deployMintableERC20 = async (name: string, symbol: string) => {
   const MintableERC20Factory = await ethers.getContractFactory("MintableERC20");
 
-  const token = await MintableERC20Factory.deploy(name, symbol, {
-    ...overrides[hre.network.name],
-  });
-  await token.deploymentTransaction().wait(1);
+  let tokenAddress = getDeployed(symbol);
+  if (!tokenAddress) {
+    const token = await MintableERC20Factory.deploy(name, symbol, {
+      ...overrides[hre.network.name],
+    });
+    await token.deploymentTransaction().wait(1);
+    tokenAddress = await token.getAddress();
+    await storeDeployInfo(symbol, {
+      address: tokenAddress,
+      constructorArgs: [name, symbol],
+    });
+  }
 
-  return token as unknown as MintableERC20;
+  return MintableERC20Factory.attach(tokenAddress) as unknown as MintableERC20;
 };
 
 export const deployMintableERC721 = async (symbol: string) => {

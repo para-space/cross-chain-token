@@ -252,6 +252,64 @@
   },
   "SocketAdapter": {
     "address": "0xf7fB70838A521B6578a616D858f3b78DF098CeAE",
-    "constructorArgs": ["0x07e11D1A1543B0D0b91684eb741d1ab7D51ae237"]
+    "constructorArgs": [
+      "0x07e11D1A1543B0D0b91684eb741d1ab7D51ae237"
+    ]
+  },
+  "Kelp": {
+    "address": "0x79aAb452fEb46db82c7305eB625688937ACC15D9",
+    "constructorArgs": [
+      "Kelp",
+      "Kelp"
+    ]
+  },
+  "LRT": {
+    "address": "0xb05887535c0BBE71d70b41a54569D7FDb18Bb9aA",
+    "constructorArgs": [
+      "LRT",
+      "LRT"
+    ]
+  },
+  "pufETH": {
+    "address": "0xB8DEc25eee5d95CF9E50578d565034c09eE45E06",
+    "constructorArgs": [
+      "pufETH",
+      "pufETH"
+    ]
+  },
+  "eETH": {
+    "address": "0x878e427D1a6949F2e014720e3752ECF041EDc442",
+    "constructorArgs": [
+      "ether.fi ETH",
+      "eETH"
+    ]
+  },
+  "LSETH": {
+    "address": "0xce2952fd1339C7DA179e263f4bb49D968cE33e76",
+    "constructorArgs": [
+      "Liquid Staked ETH",
+      "LSETH"
+    ]
+  },
+  "swETH": {
+    "address": "0xDb442d1f299db70dF9B209bbBC24Ac832Ab4Dc5b",
+    "constructorArgs": [
+      "swETH",
+      "swETH"
+    ]
+  },
+  "ezETH": {
+    "address": "0x109888D4e668B35800c03433B264F8a82d70E546",
+    "constructorArgs": [
+      "Renzo Restaked ETH",
+      "ezETH"
+    ]
+  },
+  "wstETH": {
+    "address": "0x53862E1bca980d8FE7dcC1142eEE035DB39A6bd3",
+    "constructorArgs": [
+      "Wrapped liquid staked Ether 2.0 ",
+      "wstETH"
+    ]
   }
 }
