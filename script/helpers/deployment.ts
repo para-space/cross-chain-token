@@ -403,16 +403,12 @@ export const deployMOCKWSTETH = async (stETH: tEthereumAddress) => {
   return wstETH as unknown as MockWstETH;
 };
 
-export const deployMintableERC20 = async () => {
+export const deployMintableERC20 = async (name: string, symbol: string) => {
   const MintableERC20Factory = await ethers.getContractFactory("MintableERC20");
 
-  const token = await MintableERC20Factory.deploy(
-    "Test Token Name",
-    "Test Token symbol",
-    {
-      ...overrides[hre.network.name],
-    }
-  );
+  const token = await MintableERC20Factory.deploy(name, symbol, {
+    ...overrides[hre.network.name],
+  });
   await token.deploymentTransaction().wait(1);
 
   return token as unknown as MintableERC20;

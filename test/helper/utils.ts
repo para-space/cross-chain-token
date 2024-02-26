@@ -75,7 +75,10 @@ export const deployFixture = async function () {
   clearDeployInfo();
 
   //ERC20
-  const erc20: MintableERC20 = await deployMintableERC20();
+  const erc20: MintableERC20 = await deployMintableERC20(
+    "Test Token Name",
+    "Test Token symbol"
+  );
   const tokenAddress = await erc20.getAddress();
   const aave: MockAAVE = await deployMOCKAAVE();
   const lido: MockLido = await deployMOCKLICO();
